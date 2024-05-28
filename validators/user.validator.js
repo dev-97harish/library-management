@@ -2,9 +2,15 @@ const joi = require('joi');
 const errorFunction = require('../utils/joiErrors.utils');
 
 const signupUserValidator = joi.object({
-  firstName: joi.string().alphanum().min(3).max(25).trim(true).required(),
-  lastName: joi.string().alphanum().min(3).max(25).trim(true).required(),
-  username: joi.string().alphanum().min(3).max(25).trim(true).required(),
+  firstName: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
+  lastName: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
+  username: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
   email: joi.string().email().trim(true).required(),
   phone: joi
     .string()
@@ -14,7 +20,7 @@ const signupUserValidator = joi.object({
   password: joi.string().min(8).trim(true).required(),
   role: joi
     .string()
-    .valid('super-admin', 'executive', 'data-eperator')
+    .valid('super-admin', 'sub-admin', 'user')
     .required(),
 });
 
@@ -26,7 +32,6 @@ const signUpUserValidation = async (req, res, next) => {
     phone: req.body.phone,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    email: req.body.email,
     role: req.body.role,
   };
 
@@ -34,16 +39,18 @@ const signUpUserValidation = async (req, res, next) => {
   if (error) {
     res.status(406);
     return res.json(
-      errorFunction(true, `Error in User Data : ${error.message}`)
+      errorFunction(true, `Error in User Data : ${error.message}`),
     );
-  } else {
-    next();
   }
+  return next();
 };
 
 const loginUserValidator = joi.object({
-  username: joi.string().alphanum().min(3).max(25).trim(true).required(),
-  password: joi.string().min(8).trim(true).required().required(),
+  username: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
+  password: joi.string().min(8).trim(true).required()
+    .required(),
 });
 
 const loginUserValidation = async (req, res, next) => {
@@ -56,17 +63,22 @@ const loginUserValidation = async (req, res, next) => {
   if (error) {
     res.status(406);
     return res.json(
-      errorFunction(true, `Error in User Data : ${error.message}`)
+      errorFunction(true, `Error in User Data : ${error.message}`),
     );
-  } else {
-    next();
   }
+  return next();
 };
 
 const updateUserValidator = joi.object({
-  firstName: joi.string().alphanum().min(3).max(25).trim(true).required(),
-  lastName: joi.string().alphanum().min(3).max(25).trim(true).required(),
-  username: joi.string().alphanum().min(3).max(25).trim(true).required(),
+  firstName: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
+  lastName: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
+  username: joi.string().alphanum().min(3).max(25)
+    .trim(true)
+    .required(),
   email: joi.string().email().trim(true).required(),
   phone: joi
     .string()
@@ -75,7 +87,7 @@ const updateUserValidator = joi.object({
     .required(),
   role: joi
     .string()
-    .valid('super-admin', 'executive', 'data-eperator')
+    .valid('super-admin', 'sub-admin', 'user')
     .required(),
 });
 
@@ -86,7 +98,6 @@ const updateUserValidation = async (req, res, next) => {
     phone: req.body.phone,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    email: req.body.email,
     role: req.body.role,
   };
 
@@ -94,11 +105,10 @@ const updateUserValidation = async (req, res, next) => {
   if (error) {
     res.status(406);
     return res.json(
-      errorFunction(true, `Error in User Data : ${error.message}`)
+      errorFunction(true, `Error in User Data : ${error.message}`),
     );
-  } else {
-    next();
   }
+  return next();
 };
 
 module.exports = {

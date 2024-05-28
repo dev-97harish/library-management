@@ -1,6 +1,11 @@
-const express = require('express');
+import express from 'express';
+import { verifyToken } from '../middleware/authMiddleware';
+import userRouter from './user.routes';
+import bookRouter from './books.routes';
+
 const router = express.Router();
 
-router.use('/api', require('./api'));
+router.use('/user', userRouter);
+router.use('/books', verifyToken, bookRouter);
 
-module.exports = router;
+export default router;

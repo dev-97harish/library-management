@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
+
 const IMAGE_PATH = path.join('/images');
 
 const userSchema = new mongoose.Schema(
@@ -32,7 +33,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['super-admin', 'executive', 'data-eperator'],
+      enum: ['super-admin', 'sub-admin', 'user'],
     },
     access: {
       type: String,
@@ -45,28 +46,28 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
       default: 'inactive',
-      enum: ['active', 'inactive', 'deleted'],
+      enum: ['active', 'inactive'],
     },
   },
   {
     timeStamps: true,
-  }
+  },
 );
 
-let storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
     cb(null, path.join(__dirname, '..', IMAGE_PATH));
   },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now());
+  filename(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}`);
   },
 });
 
 // static
-userSchema.statics.uploadedImage = multer({ storage: storage }).single('image');
+userSchema.statics.uploadedImage = multer({ storage }).single('image');
 
 userSchema.statics.imagePath = IMAGE_PATH;
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;
