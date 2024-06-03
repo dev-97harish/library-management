@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  login, autoLogin, register, updateUser, deleteUser, uploadImage, getUsers,
+  login, register, updateUser, deleteUser, uploadImage, getUsers,
 } from '../controllers/user.controller';
 import { verifyToken } from '../middleware/authMiddleware';
 
@@ -15,16 +15,15 @@ const {
 userRouter.get('/users', getUsers);
 
 userRouter.post('/login', loginUserValidation, login);
-userRouter.post('/autoLogin/:userId', autoLogin);
 userRouter.post('/register', signUpUserValidation, register);
 userRouter.put(
-  '/update-details/:id',
+  '/:id',
   verifyToken,
   updateUserValidation,
   updateUser,
 );
 
-userRouter.put('/update-image/:id', verifyToken, uploadImage);
+userRouter.put('/profile/:id', verifyToken, uploadImage);
 userRouter.delete('/delete/:userId', deleteUser);
 
 export default userRouter;

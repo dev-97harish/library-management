@@ -13,24 +13,23 @@ const BookSchema = new mongoose.Schema({
     type: 'string',
     required: false,
   },
-  assignee: {
+  assigneeId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'users',
   },
   assignedDate: {
     type: Date,
     required: false,
   },
-  status: {
-    type: String,
-    required: false,
-    default: 'available',
-    enum: ['available', 'booked'],
-  },
+  history: [new mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },
+    action: { type: Number, enum: [0, 1], required: true },
+    date: { type: Date, default: Date.now },
+  })],
 }, {
   timestamps: true,
 });
 
-const Books = mongoose.model('Books', BookSchema);
+const Books = mongoose.model('books', BookSchema);
 
 export default Books;

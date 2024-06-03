@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use('/', routes);
+app.use('/api/v1/', routes);
 
 app.listen(PORT, (err) => {
   if (err) {

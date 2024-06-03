@@ -68,6 +68,6 @@ userSchema.statics.uploadedImage = multer({ storage }).single('image');
 
 userSchema.statics.imagePath = IMAGE_PATH;
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('users', userSchema);
 
 export default User;

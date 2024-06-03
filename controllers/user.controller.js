@@ -42,7 +42,7 @@ const register = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
@@ -50,7 +50,6 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-
     if (user) {
       const token = await jwt.sign(
         { userId: user._id, role: user.role },
@@ -82,31 +81,7 @@ const login = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
-    });
-  }
-};
-
-const autoLogin = async (req, res) => {
-  try {
-    const user = await User.findOne({ _id: req.params.userId });
-    if (user) {
-      return res.status(200).json({
-        message: 'Logged In Successfully',
-        data: {
-          user_id: user._id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          username: user.username,
-        },
-      });
-    }
-    return res.status(STATUS_TYPE.NOT_FOUND.statusCode).json({
-      message: STATUS_TYPE.NOT_FOUND.message,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
@@ -125,7 +100,7 @@ const getUsers = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
@@ -144,7 +119,7 @@ const deleteUser = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
@@ -175,7 +150,7 @@ const updateUser = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
@@ -206,7 +181,7 @@ const uploadImage = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
@@ -214,7 +189,6 @@ const uploadImage = async (req, res) => {
 export {
   register,
   login,
-  autoLogin,
   getUsers,
   deleteUser,
   updateUser,

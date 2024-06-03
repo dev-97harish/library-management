@@ -17,37 +17,96 @@ const createBook = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
 
 const assignBook = async (req, res) => {
   try {
-    const book = await Books.findById(req.params.id);
+    const book = await Books.findById(req.params.bookId);
+    const user = await Books.findById(req.body.assigneeId);
+
+    if (!book || !user) {
+      return res.status(404).send('Book or User not found');
+    }
+
     if (book) {
-      await Books.findOneAndUpdate({ _id: book._id }, {
-        assignee: req.body.assignee,
-        assignedDate: new Date(),
-      }, { new: true });
+      if (req.body.action === 1) {
+        const updatedBook = await Books.findOneAndUpdate({ _id: book._id }, {
+          assigneeId: req.body.assigneeId,
+          assignedDate: new Date(),
+        }, { new: true });
+        book.history.push({ user: req.body.assigneeId, action: 1 });
+        book.save();
+        return res.status(200).json({
+          data: updatedBook,
+          message: 'Book assigned!',
+        });
+      }
+      if (req.body.action === 0) {
+        const updatedBook = await Books.findOneAndUpdate({ _id: book._id }, {
+          assigneeId: null,
+          assignedDate: new Date(),
+          history: [...book.history, { user: req.body.assigneeId, action: 0 }],
+        }, { new: true });
+
+        return res.status(200).json({
+          data: updatedBook,
+          message: 'Book unsassigned!',
+        });
+      }
       return res.status(200).json({
-        data: book,
-        message: 'Book assigned!',
+        message: 'Enter valid status unsassigned!',
       });
     }
+
     return res.status(202).json({
-      message: 'Can not Create Book!',
+      message: 'Book not found',
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
 
 const getBooks = async (req, res) => {
   try {
-    const books = await Books.find().populate('assignee', '_id firstName lastName');
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.size, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const matchStage = {
+      $match: {
+      },
+    };
+    if (req.query.name) {
+      matchStage.$match.name = req.query.name;
+    }
+    if (req.query.assignedDate) {
+      matchStage.$match.assignedDate = req.query.assignedDate;
+    }
+
+    const books = await Books.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          foreignField: '_id',
+          localField: 'assigneeId',
+          as: 'assigneeId',
+        },
+      },
+      matchStage,
+      {
+        $facet: {
+          metadata: [{ $count: 'total' }, { $addFields: { page } }],
+          data: [{ $skip: skip }, { $limit: limit }],
+        },
+      },
+
+    ]);
+
     if (books) {
       return res.status(200).json({
         message: 'Book data found',
@@ -59,14 +118,14 @@ const getBooks = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };
 
 const getBooksById = async (req, res) => {
   try {
-    const book = await Books.findById(req.params.id).populate('assignee', '_id firstName lastName');
+    const book = await Books.findById(req.params.id).populate('assigneeId', '_id firstName lastName');
     if (book) {
       return res.status(200).json({
         message: 'Book data found',
@@ -78,7 +137,7 @@ const getBooksById = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Internal Server error',
+      error,
     });
   }
 };

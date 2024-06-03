@@ -9,7 +9,7 @@ const bookRouter = express.Router();
 
 bookRouter.get('/', verifyToken, isAdmin, getBooks);
 bookRouter.get('/:id', verifyToken, isAdmin, getBooksById);
-bookRouter.post('/create', verifyToken, isAdmin, createBook);
-bookRouter.post('/assign/:id', verifyToken, isAdmin, assignBook);
+bookRouter.post('/', verifyToken, isAdmin, createBook);
+bookRouter.post('/assign/:bookId', verifyToken, isAdmin, assignBook);
 
 export default bookRouter;

@@ -11,7 +11,7 @@ const verifyToken = async (req, res, next) => {
     const user = await User.findById(decoded.userId);
     if (user) {
       req.user = user;
-      next();
+      return next();
     }
     return null;
   } catch (error) {
@@ -27,7 +27,7 @@ const isAdmin = async (req, res, next) => {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
     req.role = decoded.role;
     if (decoded.role !== 'user') {
-      next();
+      return next();
     }
     return res.status(401).json({ error: 'Only admin or sub-admin can manage books' });
   } catch (error) {
