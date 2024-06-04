@@ -3,13 +3,12 @@ import express from 'express';
 import {
   createBook, getBooks, assignBook, getBooksById,
 } from '../controllers/book.controller';
-import { verifyToken, isAdmin } from '../middleware/authMiddleware';
 
 const bookRouter = express.Router();
 
-bookRouter.get('/', verifyToken, isAdmin, getBooks);
-bookRouter.get('/:id', verifyToken, isAdmin, getBooksById);
-bookRouter.post('/', verifyToken, isAdmin, createBook);
-bookRouter.post('/assign/:bookId', verifyToken, isAdmin, assignBook);
+bookRouter.get('/', getBooks);
+bookRouter.get('/:id', getBooksById);
+bookRouter.post('/', createBook);
+bookRouter.post('/assign/:bookId', assignBook);
 
 export default bookRouter;

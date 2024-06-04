@@ -25,17 +25,13 @@ const createBook = async (req, res) => {
 const assignBook = async (req, res) => {
   try {
     const book = await Books.findById(req.params.bookId);
-    const user = await Books.findById(req.body.assigneeId);
-
-    if (!book || !user) {
-      return res.status(404).send('Book or User not found');
-    }
 
     if (book) {
       if (req.body.action === 1) {
         const updatedBook = await Books.findOneAndUpdate({ _id: book._id }, {
           assigneeId: req.body.assigneeId,
           assignedDate: new Date(),
+          isAssigned: true,
         }, { new: true });
         book.history.push({ user: req.body.assigneeId, action: 1 });
         book.save();
@@ -47,6 +43,7 @@ const assignBook = async (req, res) => {
       if (req.body.action === 0) {
         const updatedBook = await Books.findOneAndUpdate({ _id: book._id }, {
           assigneeId: null,
+          isAssigned: false,
           assignedDate: new Date(),
           history: [...book.history, { user: req.body.assigneeId, action: 0 }],
         }, { new: true });
@@ -87,7 +84,12 @@ const getBooks = async (req, res) => {
     if (req.query.assignedDate) {
       matchStage.$match.assignedDate = req.query.assignedDate;
     }
-
+    if (req.query.status === 'assigned') {
+      matchStage.$match.isAssigned = true;
+    }
+    if (req.query.status === 'unassigned') {
+      matchStage.$match.isAssigned = false;
+    }
     const books = await Books.aggregate([
       {
         $lookup: {

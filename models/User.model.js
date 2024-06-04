@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    permissions: {
+      type: [String],
+      required: false,
+
+    },
     image: {
       type: String,
     },

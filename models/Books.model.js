@@ -21,6 +21,10 @@ const BookSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
+  isAssigned: {
+    type: 'boolean',
+    default: false,
+  },
   history: [new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },
     action: { type: Number, enum: [0, 1], required: true },

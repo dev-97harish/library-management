@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
 import routes from './routes';
 
 require('./config/mongoose');
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'images')));
 
 app.use('/api/v1/', routes);
 

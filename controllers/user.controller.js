@@ -134,6 +134,7 @@ const updateUser = async (req, res) => {
       user.email = req.body.email;
       user.phone = req.body.phone;
       user.role = req.body.role;
+      user.permissions = req.body.permissions;
       user.save();
       return res.status(200).json({
         data: {
@@ -141,6 +142,7 @@ const updateUser = async (req, res) => {
           firstName: user.firstName,
           lastName: user.lastName,
           username: user.username,
+          permissions: user.permissions,
         },
         message: 'User Updated!',
       });
